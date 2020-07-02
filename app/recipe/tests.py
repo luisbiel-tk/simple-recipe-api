@@ -24,7 +24,6 @@ class RecipeApiTest(TestCase):
 
         recipes = Recipe.objects.all()
         serializer = RecipeSerializer(recipes, many=True)
-
         res = self.client.get(RECIPE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
