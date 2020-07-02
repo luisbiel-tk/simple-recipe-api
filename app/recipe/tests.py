@@ -50,7 +50,17 @@ class RecipeApiTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serialized_recipe.data)
 
-
     def test_get_recipe_detail_returns_not_found(self):
         res = self.client.get(recipe_detail_url(1234))
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_basic_recipe(self):
+        payload = {
+            'name': 'Mejillones',
+            'description': 'Mejillones al vapor'
+        }
+
+        response = self.client.post(RECIPE_URL, payload)
+        #recipe = Recipe.objects.get(id=response.data['id'])
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

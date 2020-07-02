@@ -9,7 +9,7 @@ class IngredientSerializer(ModelSerializer):
 
 
 class RecipeSerializer(ModelSerializer):
-    ingredients = IngredientSerializer(many=True)
+    ingredients = IngredientSerializer(many=True, read_only=True)
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'description', 'ingredients', 'created_at')
