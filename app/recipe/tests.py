@@ -4,7 +4,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from .models import Recipe
+from .models import Recipe, Ingredient
 from .serializers import RecipeSerializer
 
 RECIPE_URL = reverse('recipe:recipe-list')
@@ -37,6 +37,19 @@ class RecipeApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serialized_recipe.data)
+
+    def test_get_recipe_detail_with_ingredients(self):
+        recipe = Recipe.objects.create(name='Gambas al ajillo', description='Gambas con ajo, aceite y perejil')
+        Ingredient.objects.create(name='Gambas', recipe_id=recipe.id)
+        Ingredient.objects.create(name='Ajo', recipe_id=recipe.id)
+        Ingredient.objects.create(name='Aceite', recipe_id=recipe.id)
+
+        serialized_recipe = RecipeSerializer(recipe)
+        response = self.client.get(recipe_detail_url(recipe.id))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serialized_recipe.data)
+
 
     def test_get_recipe_detail_returns_not_found(self):
         res = self.client.get(recipe_detail_url(1234))
