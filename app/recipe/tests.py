@@ -1,3 +1,4 @@
+import uuid
 from django.urls import reverse
 from django.test import TestCase
 
@@ -54,13 +55,23 @@ class RecipeApiTest(TestCase):
         res = self.client.get(recipe_detail_url(1234))
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_create_basic_recipe(self):
+    def test_create_recipe_with_ingredients(self):
+        ingredientName1 = "Pelota"
+        ingredientName2 = "Caldo"
         payload = {
-            'name': 'Mejillones',
-            'description': 'Mejillones al vapor'
+            "name": "Escudella",
+            "description": "Nunca he sabido hacerlo... pero la de Iaia esta bien buena",
+            "ingredients": [{"name": ingredientName1}, {"name": ingredientName2}]
         }
 
-        response = self.client.post(RECIPE_URL, payload)
-        #recipe = Recipe.objects.get(id=response.data['id'])
+        response = self.client.post(RECIPE_URL, payload, format='json')
+        recipe = Recipe.objects.get(id=response.data['id'])
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        #Checking everything but the ingredients
+        for key in payload.keys():
+            if key != 'ingredients':
+                self.assertEqual(payload[key], getattr(recipe, key))
+        #Checking ingredients
+        self.assertTrue(recipe.ingredients.get(name=ingredientName1))
+        self.assertTrue(recipe.ingredients.get(name=ingredientName2))
