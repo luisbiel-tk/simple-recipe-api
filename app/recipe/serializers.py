@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Recipe, Ingredient
 
+RECIPE_INGREDIENTS = 'ingredients'
 
 class IngredientSerializer(ModelSerializer):
     class Meta:
@@ -12,14 +13,24 @@ class RecipeSerializer(ModelSerializer):
     ingredients = IngredientSerializer(many=True)
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'description', 'ingredients', 'created_at')
+        fields = ('id', 'name', 'description', RECIPE_INGREDIENTS, 'created_at')
         read_only_views = ('id',)
 
     def create(self, validated_data):
-        ingredients = validated_data.get('ingredients')
-        del validated_data['ingredients']
+        ingredients = validated_data.get(RECIPE_INGREDIENTS)
+        del validated_data[RECIPE_INGREDIENTS]
         recipe = Recipe.objects.create_recipe(recipe=validated_data, ingredients=ingredients)
 
         return recipe
+
+    def update(self, instance, validated_data):
+        ingredients = validated_data.get(RECIPE_INGREDIENTS)
+        if ingredients:
+            instance.update_ingredients(ingredients=ingredients)
+
+        instance.save()
+
+        return instance
+
 
 

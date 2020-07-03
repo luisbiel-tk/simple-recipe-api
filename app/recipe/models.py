@@ -20,6 +20,10 @@ class Recipe(models.Model):
         for ingredient in ingredients:
             Ingredient.objects.create(recipe=self, **ingredient)
 
+    def update_ingredients(self, ingredients):
+        Ingredient.objects.filter(recipe=self).delete()
+        self.add_ingredients(ingredients)
+
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=255)

@@ -83,4 +83,20 @@ class RecipeApiTest(TestCase):
 
         response = self.client.delete(recipe_detail_url(recipe_id=recipe.id))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Recipe.objects.all().count(), 0)
+        self.assertEqual(Recipe.objects.all().count(), 0)
+
+    def test_update_ingredients(self):
+        recipe = Recipe.objects.create(name='Mikolapiz', description='Helado de vainilla con una fina linea de chocolate')
+        Ingredient.objects.create(name='Nata', recipe_id=recipe.id)
+        Ingredient.objects.create(name='Chocolate', recipe_id=recipe.id)
+
+        ingredientToUpdate = 'Vainilla'
+
+        payload = {
+            "ingredients": [{"name": ingredientToUpdate}]
+        }
+        self.client.patch(recipe_detail_url(recipe_id=recipe.id), payload, format='json')
+
+        recipe.refresh_from_db()
+        self.assertEqual(recipe.ingredients.count(), 1)
+        self.assertTrue(recipe.ingredients.get(name=ingredientToUpdate))
