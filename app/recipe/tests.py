@@ -75,3 +75,12 @@ class RecipeApiTest(TestCase):
         #Checking ingredients
         self.assertTrue(recipe.ingredients.get(name=ingredientName1))
         self.assertTrue(recipe.ingredients.get(name=ingredientName2))
+
+    def test_delete_recipe(self):
+        recipe = Recipe.objects.create(name='Gambas al ajillo', description='Gambas con ajo, aceite y perejil')
+        Ingredient.objects.create(name='Gambas', recipe_id=recipe.id)
+        Ingredient.objects.create(name='Ajo', recipe_id=recipe.id)
+
+        response = self.client.delete(recipe_detail_url(recipe_id=recipe.id))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Recipe.objects.all().count(), 0)
