@@ -7,3 +7,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        searchText = self.request.query_params.get('name')
+        if searchText:
+            queryset = queryset.filter(name__contains=searchText)
+
+        return queryset

@@ -100,3 +100,10 @@ class RecipeApiTest(TestCase):
         recipe.refresh_from_db()
         self.assertEqual(recipe.ingredients.count(), 1)
         self.assertTrue(recipe.ingredients.get(name=ingredientToUpdate))
+
+    def test_not_found_recipe(self):
+        Recipe.objects.create(name='Fantasmicos', description='Muchos helados')
+        Recipe.objects.create(name='Mikolapiz', description='Helado de vainilla con una fina linea de chocolate')
+
+        response = self.client.get(RECIPE_URL, {'name': 'Mikolapiz'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
