@@ -19,7 +19,7 @@ class RecipeApiTest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_get_all_recipes(self):
+    def test_list_recipes(self):
         Recipe.objects.create(name='Tortilla', description='Tortilla de patatas con cebolla')
         Recipe.objects.create(name='Banderilla', description='Pincho de olivas y boquerones')
 
@@ -80,6 +80,7 @@ class RecipeApiTest(TestCase):
         recipe = Recipe.objects.create(name='Gambas al ajillo', description='Gambas con ajo, aceite y perejil')
         Ingredient.objects.create(name='Gambas', recipe_id=recipe.id)
         Ingredient.objects.create(name='Ajo', recipe_id=recipe.id)
+        self.assertEqual(Recipe.objects.all().count(), 1)
 
         response = self.client.delete(recipe_detail_url(recipe_id=recipe.id))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
