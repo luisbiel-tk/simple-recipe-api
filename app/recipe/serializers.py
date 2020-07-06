@@ -17,8 +17,7 @@ class RecipeSerializer(ModelSerializer):
         read_only_views = ('id',)
 
     def create(self, validated_data):
-        ingredients = validated_data.get(RECIPE_INGREDIENTS)
-        del validated_data[RECIPE_INGREDIENTS]
+        ingredients = validated_data.pop(RECIPE_INGREDIENTS, None)
         recipe = Recipe.objects.create_recipe(recipe=validated_data, ingredients=ingredients)
 
         return recipe
@@ -27,8 +26,6 @@ class RecipeSerializer(ModelSerializer):
         ingredients = validated_data.get(RECIPE_INGREDIENTS)
         if ingredients:
             instance.update_ingredients(ingredients=ingredients)
-
-        instance.save()
 
         return instance
 

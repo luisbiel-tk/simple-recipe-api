@@ -23,6 +23,7 @@ class Recipe(models.Model):
     def update_ingredients(self, ingredients):
         Ingredient.objects.filter(recipe=self).delete()
         self.add_ingredients(ingredients)
+        self.save()
 
 
 class Ingredient(models.Model):
