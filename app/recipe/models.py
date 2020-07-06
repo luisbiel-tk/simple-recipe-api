@@ -13,8 +13,8 @@ class Recipe(models.Model):
     objects = RecipeManager()
 
     created_at = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=255)
-    description = models.CharField(max_length=2000)
+    name = models.TextField()
+    description = models.TextField()
 
     def add_ingredients(self, ingredients):
         for ingredient in ingredients:
@@ -26,5 +26,5 @@ class Recipe(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.TextField()
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients')
